@@ -6,7 +6,9 @@ last-reviewed: 2026-04-23
 
 # Working with AI
 
-This is the most important file in the guide. The tech stack is something you will forget and re-learn. The habit you build *here* — how to direct an AI pair on a real project — will outlast any framework.
+> **Read this after your first deploy.** If you haven't shipped a placeholder version of the assignment yet, start with [04-your-assignment.md](04-your-assignment.md) and come back. This file makes more sense once you have felt at least one real change-build-deploy cycle.
+
+This is the most important file in the guide. The tech stack is something you will forget and re-learn. The habit you build *here* — how to direct an AI pair on a real project — will outlast any framework. **The scrollytelling assignment is the vehicle; this file is the payload.**
 
 > **TL;DR.** AI writes code cheaply; direction is scarce. Put your direction in files (references, specs, phases), not in chat. Verify with a command, not a vibe. Run the [control loop](#the-control-loop).
 

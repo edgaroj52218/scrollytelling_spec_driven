@@ -1,25 +1,40 @@
 # Scrolly
 
-A statically-exported Next.js site that teaches **how to build a scrollytelling web experience** by being one.
+A statically-exported Next.js site that teaches **how to direct an AI pair on a real project** — disguised as an assignment to build a scrollytelling web page.
 
 - **Live site:** https://kaw393939.github.io/scrollytelling_spec_driven/
 - **Image library:** https://kaw393939.github.io/scrollytelling_spec_driven/images/
 - **Repo:** https://github.com/kaw393939/scrollytelling_spec_driven
 - **Stack:** Next.js 16 App Router (static export) · React 19 · TypeScript · framer-motion · Markdown + Zod · CSS Modules
 
+## The brief (and the real lesson)
+
+> **Vehicle:** a scrollytelling personal web page, deployed to GitHub Pages.
+> **Payload:** how to work with an AI coding assistant on a real, multi-session project without losing control of what it writes.
+
+The Next.js stack is the *technical objective* — the thing you will ship and put on your résumé. The **process** — references, specs, phases, the control loop, tests, audits — is the *transferable skill*. Frameworks change. How you direct an AI pair on a codebase larger than a chat window does not.
+
+Treat this repo like a technology brief: the requirements are concrete (ship a scrollytelling page), but the point of the exercise is learning the ideology and process used to deliver it.
+
 ## If you are a student
 
-Start here &rarr; **[docs/guide/00-start-here.md](docs/guide/00-start-here.md)**.
+Start here → **[docs/guide/00-start-here.md](docs/guide/00-start-here.md)**.
 
-That guide covers, in order:
+The guide is organized in three parts:
 
+**Part 1 — Ship something first** (feel the work before the theory)
 1. [The stack](docs/guide/01-the-stack.md) — what Next.js, React, JSX, and static export actually are.
-2. [Hosting](docs/guide/02-hosting.md) — GitHub Pages vs Vercel vs the rest, and why this class uses Pages.
-3. [Working with AI](docs/guide/03-working-with-ai.md) — the garden-hose mental model, the three-layer process, and the habits that make AI pairing reliable. **Most important file.**
-4. [Your assignment](docs/guide/04-your-assignment.md) — setup, workflow, rubric, how to submit.
-5. [Glossary](docs/guide/05-glossary.md) — every term in one place.
-6. [Reference projects as context packs](docs/guide/06-reference-as-context-pack.md) — how to harvest ideas and code from working sites (including this one's parent, [bseai_degree](https://github.com/kaw393939/bseai_degree)) into your own specs and phases. This is how you make your work reusable.
-7. [Prompt templates — the control loop](docs/guide/07-prompt-templates.md) — the seven prompts that drive planning and execution, copy-pasteable.
+2. [Hosting](docs/guide/02-hosting.md) — GitHub Pages vs Vercel, and why this class uses Pages.
+3. [Your assignment](docs/guide/04-your-assignment.md) — the brief. Setup, workflow, rubric, how to submit.
+
+**Part 2 — Why we work this way** (the real lesson; read after your first deploy)
+4. [Working with AI](docs/guide/03-working-with-ai.md) — garden-hose model, failure modes, control loop, tests as durable exit checks, quality audits. **The most important file.**
+5. [Prompt templates](docs/guide/07-prompt-templates.md) — copy-pasteable prompts for every step of the control loop.
+6. [Reference projects as context packs](docs/guide/06-reference-as-context-pack.md) — how to harvest ideas and working code from sites like [bseai_degree](https://github.com/kaw393939/bseai_degree) into your own specs and phases.
+
+**Part 3 — Reference**
+7. [Glossary](docs/guide/05-glossary.md) — every term in one place.
+8. [`docs/specs/`](docs/specs/) and [`docs/phases/`](docs/phases/) — the full build plan.
 
 ## Quick start
 
@@ -34,7 +49,7 @@ Deploying to Pages is handled by [.github/workflows/deploy.yml](.github/workflow
 
 ## How this project is built
 
-This repo uses a deliberately structured, three-layer process to keep a human and an AI coding assistant aligned across long sessions.
+This repo uses a three-layer process to keep a human and an AI coding assistant aligned across long sessions.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
@@ -49,36 +64,20 @@ This repo uses a deliberately structured, three-layer process to keep a human an
 └──────────────────────────────────────────────────────────────┘
 ```
 
-The idea in one paragraph: a modern AI coding assistant is a nearly unlimited supply of raw intelligence — electricity converted into something that behaves like reasoning. What is scarce, and what a human has to bring, is **direction**. Specs give the AI stable meaning; phases give it a scoped task; references give it real code to port from instead of patterns to invent. Runnable exit checks decide when a task is actually done, so correctness is a matter of commands and not of vibes.
+The idea in one paragraph: a modern AI coding assistant is a nearly unlimited supply of raw intelligence. What is scarce is **direction**. Specs give the AI stable meaning; phases give it a scoped task; references give it real code to port from; runnable exit checks and automated tests decide when the work is actually done. Correctness is a matter of commands, not vibes.
 
-Long-form treatment of the methodology — including the garden-hose mental model for *how* to apply the pressure — lives in [docs/guide/03-working-with-ai.md](docs/guide/03-working-with-ai.md).
+Long-form treatment of the methodology, including the garden-hose mental model, failure modes, testing matrix, and audit lenses, lives in [docs/guide/03-working-with-ai.md](docs/guide/03-working-with-ai.md).
 
-## The control loop
+## The control loop (at a glance)
 
-Every real task in this repo runs through the same seven-step loop — once for planning, then once per phase for execution. Full copy-pasteable versions live in [docs/guide/07-prompt-templates.md](docs/guide/07-prompt-templates.md).
+Every real task in this repo runs through a seven-step loop — once for planning, then once per phase for execution:
 
-**Planning (wide → narrow):**
+**Planning (wide → narrow):** Harvest → Converge → Specify → Phase.
+**Per phase (before → during → after):** Pre-flight QA → Implement (+ tests) → Exit QA (+ optional Knuth / Clean Code / GoF audit).
 
-1. **Harvest.** *"Go look at this codebase and tell me all the good ideas you can find."*
-2. **Converge.** *"Discuss. Refine. Agree on what needs done."*
-3. **Specify.** *"Go into `docs/specs/` and create as many specs as we need to cover this part of the project."*
-4. **Phase.** *"Review the specs and plan phases so that at the end we will have addressed 100% of the specs we defined."*
+If exit QA fails, you loop back — that's why it's a *control loop*, not a checklist.
 
-**Per phase (before → during → after):**
-
-5. **Pre-flight QA.** *"QA `docs/phases/NN-name.md` and update it with any relevant information from the current codebase to prepare it for implementation."*
-6. **Implement.** One phase, one session, thumb on the nozzle.
-    - **6a. Tests.** Unit / integration / e2e covering positive, negative, edge, and golden-path cases. Every spec gets a golden-path e2e; every objective gets a test as its exit check. Matrix: [docs/specs/07-testing.md](docs/specs/07-testing.md).
-7. **Exit QA.** *"QA this phase to ensure that 100% of the phase objectives are met."* Lint, unit, build, and e2e all green.
-    - **7.5. Audit pass** (recommended for non-trivial phases). Knuth / Clean Code / Gang of Four reading passes. Each finding dispositioned as **blocker**, **backlog**, or **wontfix**.
-
-If step 7 fails, you do not move on — you loop back to step 5 (or further). That is why it is a *control loop* and not a checklist.
-
-Two ideas do most of the work:
-
-- **100% coverage as an explicit target.** Every spec has a phase; every phase objective has a runnable check; every spec has a golden-path e2e test. Gaps are failures.
-- **Pre-flight QA.** Reading the codebase against the plan *before* touching it catches drift before the AI has a chance to invent around it.
-- **Tests as durable exit checks + audits as planned reading passes.** Tests (positive, negative, edge, golden) fight regression and enable refactoring. Audits (Knuth / Clean Code / GoF) answer *"is it any good?"* after correctness is settled.
+Copy-pasteable prompts, loopback rules, and the testing/audit details: **[docs/guide/07-prompt-templates.md](docs/guide/07-prompt-templates.md)**.
 
 ## Project layout
 

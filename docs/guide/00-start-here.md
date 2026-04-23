@@ -6,39 +6,58 @@ last-reviewed: 2026-04-23
 
 # Start here
 
-Welcome. This guide is for students using **Scrolly** as the starting point for a scrollytelling web assignment. It is short on purpose. Read it in order and you will know everything you need.
+Welcome. This is a **technology brief**, not a tutorial.
+
+> **The brief:** ship a scrollytelling personal web page, deployed to GitHub Pages, built from this template.
+> **The real lesson:** how to work with an AI coding assistant on a real project — with references, specs, phases, tests, and audits — without losing control of what it writes.
+
+The Next.js stack is the *vehicle*. The process is the *payload*. Frameworks will change; how you direct an AI pair on a codebase larger than a chat window will not. Do the brief honestly and the process will stick.
 
 ## Reading order
 
-| # | File | Time | Required? |
-|---|------|------|-----------|
-| 1 | [01-the-stack.md](01-the-stack.md) | 10 min | Yes |
-| 2 | [02-hosting.md](02-hosting.md) | 5 min | Yes |
-| 3 | [03-working-with-ai.md](03-working-with-ai.md) | 15 min | **Yes — this is the most important one** |
-| 4 | [04-your-assignment.md](04-your-assignment.md) | 5 min | Yes |
-| 5 | [05-glossary.md](05-glossary.md) | — | Reference only |
-| 6 | [06-reference-as-context-pack.md](06-reference-as-context-pack.md) | 10 min | Recommended — how to reuse code across projects |
+The guide is in three parts. **Do Part 1 first**, ship something, then come back for Part 2. Methodology makes more sense after you have felt the work.
 
-After this guide, if you are doing the full build:
+### Part 1 — Ship something (feel the work before the theory)
 
-- [`../specs/`](../specs/) — what the site is supposed to do (10 short files)
-- [`../phases/`](../phases/) — the step-by-step implementation plan (9 phases)
+| # | File | Time | Why |
+|---|------|------|-----|
+| 1 | [01-the-stack.md](01-the-stack.md) | 10 min | What Next.js, React, JSX, and static export actually are |
+| 2 | [02-hosting.md](02-hosting.md) | 5 min | GitHub Pages, and why this class uses it |
+| 3 | [04-your-assignment.md](04-your-assignment.md) | 10 min | The brief itself — setup, workflow, rubric, how to submit |
 
-You do not need to read those to submit a basic assignment. They are here if you want to build the full scrollytelling experience end-to-end.
+**Stop and ship.** Deploy a placeholder version of your site before reading Part 2. You want to have felt at least one real change-build-deploy cycle.
 
-## What you are building
+### Part 2 — Why we work this way (read after your first deploy)
+
+| # | File | Time | Why |
+|---|------|------|-----|
+| 4 | [03-working-with-ai.md](03-working-with-ai.md) | 20 min | **The most important file.** Garden-hose model, failure modes, control loop, tests as durable exit checks, quality audits |
+| 5 | [07-prompt-templates.md](07-prompt-templates.md) | 10 min | Copy-pasteable prompts for every step of the control loop |
+| 6 | [06-reference-as-context-pack.md](06-reference-as-context-pack.md) | 10 min | How to harvest ideas and working code from real sites into your own specs and phases |
+
+### Part 3 — Reference
+
+| # | File | Why |
+|---|------|-----|
+| 7 | [05-glossary.md](05-glossary.md) | Every term in one place |
+| — | [`../specs/`](../specs/) | What the full site is supposed to do (10 short files) |
+| — | [`../phases/`](../phases/) | Step-by-step implementation plan (9 phases) |
+
+You do not need Part 3 to submit a basic assignment. It is there if you want to build the full scrollytelling experience end-to-end.
+
+## What you are building (the brief)
 
 A personal scrollytelling web page that:
 
-1. Uses scroll to drive the story (sticky panels, reveals, or scroll-linked animation — pick what fits your topic).
+1. Uses scroll to drive the story — sticky panels, reveals, or scroll-linked animation, whatever fits your topic.
 2. Is built from Markdown + React components.
 3. Deploys to **your own** GitHub Pages URL.
 4. Lists your images automatically at `/images/` — a feature inherited from this template.
 
-## What you are learning
+## What you are learning (the payload)
 
 - How a modern web framework (Next.js + React) is organised.
 - How to deploy a static site to GitHub Pages for free.
-- How to **work with an AI pair** without losing control of what it writes. This is the transferable skill.
+- **How to direct an AI pair on a real project across many sessions — using files, not chat, to hold meaning.** This is the transferable skill.
 
-Keep going &rarr; [01-the-stack.md](01-the-stack.md).
+Keep going → [01-the-stack.md](01-the-stack.md).

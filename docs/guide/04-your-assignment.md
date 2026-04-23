@@ -4,7 +4,9 @@ audience: students
 last-reviewed: 2026-04-23
 ---
 
-# Your assignment
+# Your assignment — the brief
+
+Think of this file as a **technology brief** handed to you on day one of a junior engineering job. It is a short, concrete set of requirements. What you are actually being taught — how to work with an AI pair on a real project — is not in the brief. It is in [03-working-with-ai.md](03-working-with-ai.md), which you should read *after* you have shipped a first version of the brief.
 
 ## Goal
 
