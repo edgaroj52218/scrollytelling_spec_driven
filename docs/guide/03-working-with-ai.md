@@ -123,4 +123,5 @@ Symptoms and fixes you will actually use:
 ## Keep reading
 
 - Next: [04-your-assignment.md](04-your-assignment.md)
+- How to harvest and reuse working code as a "context pack" &rarr; [06-reference-as-context-pack.md](06-reference-as-context-pack.md)
 - Glossary: [05-glossary.md](05-glossary.md)

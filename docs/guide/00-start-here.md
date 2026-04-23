@@ -17,6 +17,7 @@ Welcome. This guide is for students using **Scrolly** as the starting point for 
 | 3 | [03-working-with-ai.md](03-working-with-ai.md) | 15 min | **Yes — this is the most important one** |
 | 4 | [04-your-assignment.md](04-your-assignment.md) | 5 min | Yes |
 | 5 | [05-glossary.md](05-glossary.md) | — | Reference only |
+| 6 | [06-reference-as-context-pack.md](06-reference-as-context-pack.md) | 10 min | Recommended — how to reuse code across projects |
 
 After this guide, if you are doing the full build:
 

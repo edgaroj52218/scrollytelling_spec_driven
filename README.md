@@ -18,6 +18,7 @@ That guide covers, in order:
 3. [Working with AI](docs/guide/03-working-with-ai.md) — the garden-hose mental model, the three-layer process, and the habits that make AI pairing reliable. **Most important file.**
 4. [Your assignment](docs/guide/04-your-assignment.md) — setup, workflow, rubric, how to submit.
 5. [Glossary](docs/guide/05-glossary.md) — every term in one place.
+6. [Reference projects as context packs](docs/guide/06-reference-as-context-pack.md) — how to harvest ideas and code from working sites (including this one's parent, [bseai_degree](https://github.com/kaw393939/bseai_degree)) into your own specs and phases. This is how you make your work reusable.
 
 ## Quick start
 
