@@ -1,7 +1,7 @@
 # AI-Augmented Software Engineering: Process + Rationale
 
 > This document defines the process you are using in this course and explains why it works.
-> You should be able to both **execute this process** and **defend it using research-backed reasoning**.
+> You should be able to both **execute this process** and **defend it using research-backed areasoning**.
 
 ---
 
@@ -54,6 +54,10 @@ This forms a **context pack**.
 
 Research shows agents fail when forced to **invent missing information**.
 Providing real references reduces hallucination and improves consistency.
+
+> [!NOTE]
+> **Antigravity (AI Agent) Perspective:**
+> If you don't give me the specific context of your codebase, I am forced to rely on my training data. My training data assumes you are building a generic, standard web app. If you ask me to "add a database query" without providing your custom `RepositoryFactory`, I will hallucinate standard Prisma or raw SQL code, which will instantly break your Sovereign Node architecture. Context stops me from guessing.
 
 ---
 
@@ -144,6 +148,10 @@ Research shows:
 
 This step enforces that alignment.
 
+> [!TIP]
+> **Antigravity (AI Agent) Perspective:**
+> Finding the file with the bug is easy. Knowing *how* to fix it is the hard part. If there is a bug in the Deferred Job queue, I might try to fix it by writing a `setTimeout` directly in the UI component because it's the easiest path. Grounding me in your architecture forces me to respect your `JobQueueRepository` and `AbortController` patterns instead of taking dangerous shortcuts.
+
 ---
 
 ## Step 5 — Phase QA (Pre-Execution Check)
@@ -186,6 +194,10 @@ Research shows:
 
 * early editing strongly correlates with failure
 * successful agents perform **context gathering before modification**
+
+> [!IMPORTANT]
+> **Antigravity (AI Agent) Perspective:**
+> The most dangerous thing a user can tell me is "Here is an error, fix it." It forces me into a reactive state where I just try to make the red text go away by rewriting the nearest file. Forcing me to diagnose *first* ensures I understand the root cause before I write a single line of code. Never let me edit before I explain the problem to you.
 
 ---
 
@@ -236,6 +248,10 @@ Research shows:
 * systems do not improve without feedback
 
 This step introduces **stateful learning into a stateless system**.
+
+> [!NOTE]
+> **Antigravity (AI Agent) Perspective:**
+> I suffer from total amnesia. The moment our session ends or my context window resets, I forget everything we've built. By externalizing the learnings into Markdown artifacts (like the specs we wrote today), you are building an external hard drive for my brain. The next time you summon me, I can read those files and instantly pick up exactly where we left off.
 
 ---
 
