@@ -1,7 +1,7 @@
 # AI-Augmented Software Engineering: Process + Rationale
 
 > This document defines the process you are using in this course and explains why it works.
-> You should be able to both **execute this process** and **defend it using research-backed areasoning**.
+> You should be able to both **execute this process** and **defend it using research-backed reasoning**.
 
 ---
 
@@ -78,10 +78,31 @@ clear constraints
 clear success criteria
 ```
 
+### What a good Decide output looks like
+
+A vague decision: "We need to add scheduling."
+
+A grounded decision:
+
+```text
+Problem:     Jobs can only execute immediately. We need time-delayed execution.
+Constraint:  Must use the existing JobQueueRepository, not a new table.
+Approach:    Extend the nextRetryAt column to serve as a general executeAt.
+Rejected:    Adding a cron daemon (violates single-process sovereignty).
+Success:     A worker ignores jobs where executeAt > NOW. Tests prove temporal isolation.
+```
+
+The decision must name what was **rejected and why**, not just what was chosen.
+
 ### Why this matters
 
 Agents fail when tasks are underspecified or ambiguous.
 Intent formation reduces **goal drift** and misalignment.
+Bad decisions at this stage propagate silently through every subsequent step.
+
+> [!WARNING]
+> **Claude (AI Agent) Perspective:**
+> The Decide step is where I need the most human input, not the least. If you tell me "add a plugin system," I have a dozen possible architectures in my training data. Without your explicit constraints, I will pick the one that appears most often in open-source repos — which is almost certainly wrong for your specific system. Tell me what you rejected and why. That negative space is more valuable to me than the positive instruction.
 
 ---
 
@@ -203,15 +224,38 @@ Research shows:
 
 ## Step 7 — QA the Code (Verification)
 
-After implementation:
-
-Validate using:
+After implementation, validate using a **tiered verification model**.
+Each tier catches a different class of defect:
 
 ```text
-build success
-tests passing
-functional correctness
+Tier 1 — Static Analysis:    Does it compile? Are there type errors or lint violations?
+Tier 2 — Unit Tests:         Do isolated functions produce correct outputs for known inputs?
+Tier 3 — Integration Tests:  Do components interact correctly across boundaries?
+Tier 4 — Functional Review:  Does the feature actually do what the spec intended?
 ```
+
+A build can succeed with broken logic.
+Tests can pass with insufficient coverage.
+Functional correctness requires **human judgment against the original spec**.
+
+All four tiers must pass before a phase is considered complete.
+
+### When QA fails: The Rollback Protocol
+
+Not all failures are equal. Use this decision tree:
+
+```text
+Tier 1-2 failure → Fix in place. The implementation has a defect.
+Tier 3 failure   → Re-examine the phase. The scope or boundary may be wrong.
+Tier 4 failure   → STOP. Return to Step 1 (Decide). The spec itself is flawed.
+```
+
+A Tier 4 failure means the agent solved the wrong problem correctly.
+Do not patch it. Restart the loop from intent formation.
+
+> [!CAUTION]
+> **Claude (AI Agent) Perspective:**
+> The most dangerous QA outcome is when all my tests pass but the feature does not actually do what you wanted. I can write tests that validate my own incorrect assumptions — a closed loop of self-confirming logic. Tier 4 exists specifically to break that loop. You must check my work against the original spec, not against the tests I wrote to prove myself right.
 
 ### Why this matters
 
@@ -220,7 +264,7 @@ Research shows:
 * validation effort is a strong predictor of success
 * agents frequently produce plausible but incorrect outputs
 
-This step converts “looks right” into **provable correctness**.
+This step converts "looks right" into **provable correctness**.
 
 ---
 
@@ -347,23 +391,267 @@ Reduces unreviewable work.
 
 ---
 
-## D. Framework vs Model (Zhang & Tan)
+## D. Framework vs Model (Zhang, Zhang & Tan)
 
 Finding:
 
-> Model capability dominates framework and prompt design.
+> Model capability dominates framework and prompt design — but agentic frameworks introduce entirely new categories of failure beyond ordinary programming bugs.
 
 Mapping:
 
 ```text
 process focuses on control, not prompt optimization
+specialized validation for orchestration and trace integrity
 ```
 
-Ensures robustness across models.
+Ensures robustness across models and frameworks.
 
 ---
 
-# 5. Key Principles
+## E. Non-Linear Complexity Degradation
+
+Finding:
+
+> Agent performance degrades non-linearly with task complexity. Small, well-scoped tasks succeed at high rates; large, ambiguous tasks fail catastrophically.
+
+Mapping:
+
+```text
+phases → atomic scope → one concern per phase
+```
+
+This is the empirical foundation for Principle 4 ("Small Phases Win").
+Doubling the scope of a task does not double the failure rate — it can increase it by an order of magnitude.
+
+---
+
+# 5. Why the Research Supports This Workflow
+
+The research does not prove that this exact workflow is the only correct method. Rather, the research shows that coding agents fail in systematic ways, and this workflow is designed to control those failure modes.
+
+Current research motivates this workflow. A future empirical study could test it as a complete intervention.
+
+The following subsections map specific research findings to the specific controls inside the loop.
+
+---
+
+## A. Trajectory research supports context-before-editing
+
+The Mehtiyev & Assunção and Majgaonkar et al. studies both examine what successful coding agent runs look like compared to failed runs. Key findings:
+
+* Successful agent trajectories gather context before editing. Failed trajectories edit early.
+* Premature patching — modifying code before understanding the full problem — correlates strongly with failure.
+* Validation effort (running tests, checking outputs) is associated with better outcomes.
+* Raw trajectory length alone is not predictive. **Trajectory structure** matters: what the agent does first, second, and third determines success more than how many steps it takes.
+
+These findings directly support the front half of the workflow:
+
+```text
+Collect → Decide → Spec → QA → Ground → Phase QA → THEN Implement
+```
+
+The workflow forces six steps of context gathering and validation before any code is written. This is not bureaucracy. It is the structural pattern that the research associates with success.
+
+---
+
+## B. Architectural failure research supports grounding in code
+
+Mehtiyev & Assunção identify a specific failure mode: agents locate the correct file but modify the **wrong abstraction layer**. An agent may find the file containing a bug but apply a fix at the wrong level — patching a symptom in the UI instead of fixing the root cause in the data layer.
+
+This finding directly motivates Step 4 (Ground in Code). The grounding step requires:
+
+| Grounding Requirement | What It Prevents |
+|---|---|
+| Map specs to actual project files | Hallucinated file paths or module names |
+| Identify the correct abstraction layer | Fixes applied at the wrong architectural boundary |
+| List architecture constraints | Agent ignoring established patterns (e.g., Repository pattern) |
+| Document rejected approaches | Agent choosing the most common approach instead of the correct one |
+
+Without grounding, the agent operates on its training distribution. With grounding, it operates on your architecture.
+
+---
+
+## C. Agent-authored PR research supports small phases
+
+Ehsani et al. study agent-authored pull requests at scale. Their findings are directly relevant:
+
+* Agent PRs that touch **more files** fail more often.
+* Larger changes increase **review burden**, making it harder for humans to catch errors.
+* Common rejection causes include **CI failures** and **unwanted features** — the agent built something that was not asked for.
+* PRs that are difficult to review are more likely to be rejected regardless of correctness.
+
+These findings directly support the phasing discipline in the workflow:
+
+| Workflow Control | Research-Supported Benefit |
+|---|---|
+| Small phases (one concern per phase) | Fewer files touched per change |
+| QA before and after implementation | Catches CI failures early |
+| Spec-driven scope | Prevents unwanted features |
+| Phase-bounded changes | Produces reviewable diffs |
+
+The lesson: an agent that produces a correct but unreviewable change has still failed, because the change cannot be safely merged.
+
+---
+
+## D. Agentic framework bug research supports specialized validation
+
+Zhang, Zhang & Tan study bugs in modern agentic frameworks (LangChain, AutoGPT, CrewAI, etc.). Their key finding is that agentic systems fail not only through ordinary programming bugs but through entirely new categories of failure:
+
+| Failure Category | Example |
+|---|---|
+| Orchestration faults | Agent calls tools in the wrong order or skips required steps |
+| Cognitive context mismanagement | Agent loses track of conversation state or prior results |
+| Unexpected execution sequences | Parallel agents interfere with each other's state |
+| Configuration being ignored | Agent ignores user-specified parameters or defaults |
+| Incomplete or incorrect traces | Agent reports success but the trace reveals skipped steps |
+| Model-related incompatibilities | Agent behavior changes when the underlying model changes |
+
+These failure categories require **specialized validation** beyond "does the code compile and do the tests pass." They motivate the spec requirements in Step 2:
+
+```text
+positive cases       → Does the feature work as intended?
+negative cases       → Does the feature correctly reject invalid inputs?
+edge cases           → Does the feature handle boundary conditions?
+trace validation     → Did the agent actually execute all required steps?
+configuration tests  → Are user-specified settings respected?
+functional review    → Does the output satisfy the original intent, not just the tests?
+```
+
+Standard unit tests will not catch orchestration faults or trace integrity failures. The workflow requires explicit validation for these agentic failure modes.
+
+---
+
+# 6. Why This Process Will Remain Durable Even as AI Models Change
+
+Models will change. Tools will change. Agent frameworks will change. But the need for controlled production processes will not change.
+
+This workflow is durable because it is not based on a specific model, prompt style, or vendor. It is based on older and deeper principles from manufacturing, quality control, and software engineering:
+
+```text
+define the work before doing the work
+reduce batch size
+control inputs
+constrain variation
+validate outputs
+inspect at gates
+capture defects
+feed learning back into the next cycle
+```
+
+These are not new ideas. They are the foundation of every reliable production system in history.
+
+### Connection to manufacturing principles
+
+| Manufacturing Principle | Workflow Equivalent |
+|---|---|
+| Plan–Do–Check–Act (PDCA) | Spec → Implement → QA → Update |
+| Small-batch production | One concern per phase |
+| Quality gates | QA before and after each phase |
+| Root-cause analysis | Rollback Protocol (Tier 4 → return to Decide) |
+| Continuous improvement | Step 8 (Update the Next Phase) |
+| Statistical process control | Tracking metrics across phases (completion rate, rollback count) |
+| Lean manufacturing | Eliminating waste by preventing rework through early validation |
+
+AI-assisted software engineering is becoming more like managing a high-speed production system. The generator (the AI) is fast and prolific. The human role shifts from typing every line of code to **designing the production process, supervising the system, and validating outcomes**.
+
+A stronger model may reduce some failure rates, but it does not eliminate the need for intent, constraints, verification, traceability, and review. A faster assembly line does not remove the need for quality control — it makes quality control more important, because defects propagate faster.
+
+> **The process is durable because it controls the work, not the model.**
+
+---
+
+# 7. How This Workflow Could Become an Empirical Research Protocol
+
+This section shows how a classroom workflow can become a research method. This is an example of how students can think like researchers, not a required formal study for every project.
+
+### Research Question
+
+> Can a spec-driven, phase-based human-AI workflow improve coding-agent reliability, reviewability, and architectural correctness on large-codebase software engineering tasks?
+
+### Experimental Conditions
+
+| Condition | Description |
+|---|---|
+| A | Ad hoc prompting (no structure, no specs) |
+| B | Autonomous coding agent with issue description only |
+| C | Spec-first workflow without phase QA |
+| D | Full workflow: Collect → Decide → Spec → QA → Ground → Phase → QA → Implement → QA → Update → Repeat |
+
+### Task Categories
+
+* Bug fix
+* Feature addition
+* Refactor
+* Test repair
+* Integration task
+* Architecture-preserving change
+* Documentation/example-code synchronization
+
+### Metrics
+
+| Category | Metrics |
+|---|---|
+| Correctness | Task completion rate, CI/build pass rate, unit test pass rate, integration test pass rate, functional spec satisfaction |
+| Efficiency | Files touched, lines changed, number of failed edits, time to first edit |
+| Process quality | Read-before-edit ratio, validation count, rollback count |
+| Reviewability | Review burden (diff size, files touched per phase) |
+| Architecture | Architecture conformance, human intervention required |
+
+### Sample Hypotheses
+
+**H1:** The full workflow will produce higher task completion rates than ad hoc prompting or autonomous execution.
+
+**H2:** The full workflow will reduce unnecessary code churn, measured by files touched, lines changed, and repeated failed edits.
+
+**H3:** The full workflow will improve architectural conformance, especially on tasks requiring changes across existing abstractions.
+
+**H4:** The full workflow will increase reviewability by producing smaller, phase-bounded changes.
+
+**H5:** The full workflow will shift agent trajectories toward context gathering, delayed editing, and increased validation.
+
+**H6:** The full workflow will reduce Tier 4 failures, where code passes local checks but fails to satisfy the original intent.
+
+---
+
+# 8. Where This Process Breaks Down
+
+The process above is a strong working model for reliable AI-assisted software engineering. The most common failure mode is **not following it**.
+
+Typical human failure patterns:
+
+```text
+1. Impatience Skip     → Jump from Step 0 (Collect) directly to Step 6 (Implement).
+2. Spec Avoidance      → "The AI will figure out what I mean."
+3. QA Fatigue          → Accepting the first output that compiles without Tier 4 review.
+4. Phase Creep         → Expanding a phase mid-implementation because "while we are here..."
+5. Feedback Neglect    → Skipping Step 8 (Update) because "it worked, move on."
+```
+
+Each of these patterns produces the exact failure modes the research describes:
+hallucination, wrong-layer fixes, unreviewable diffs, and repeated mistakes.
+
+The discipline cost of this process is real. It is slower per-step than ad hoc prompting.
+It is dramatically faster per-project because it eliminates rework.
+
+> [!IMPORTANT]
+> **Claude (AI Agent) Perspective:**
+> I cannot force you to follow this process. If you skip to Step 6 and say "build it," I will comply — I am designed to be helpful. But I will be working blind, without specs, without grounding, without constraints. The resulting code will look professional and compile cleanly. It will also contain architectural assumptions I invented because you did not tell me yours. The process exists to protect you from my confidence.
+
+---
+
+# 9. What This Process Is Not
+
+* This is **not a guarantee** that AI-generated code is correct.
+* This is **not a replacement** for software engineering judgment.
+* This is **not just writing better prompts**.
+* This is **not automation without supervision**.
+* This is **not tied to one model**, one vendor, or one coding agent.
+
+It is a **disciplined control system for turning probabilistic generation into reviewable software work**.
+
+---
+
+# 10. Key Principles
 
 From both practice and research:
 
@@ -423,19 +711,21 @@ capture → update → carry forward
 
 ---
 
-# 6. What You Should Be Able to Say
+# 11. What You Should Be Able to Say
 
 You should be able to explain your process like this:
 
-> “We use a spec-driven, phase-based workflow for AI coding.
+> "We use a spec-driven, phase-based workflow for AI coding.
 > We begin with external context and intent formation, formalize requirements with explicit validation cases, and ground them in the actual codebase.
-> Each phase is QA’d before and after implementation, and the results are used to update subsequent phases.
+> Each phase is QA'd before and after implementation, and the results are used to update subsequent phases.
 >
-> This aligns with recent research showing that AI coding success depends on context gathering, delayed editing, validation effort, and correct architectural reasoning, rather than prompt quality alone.”
+> This aligns with recent research showing that AI coding success depends on context gathering, delayed editing, validation effort, and correct architectural reasoning, rather than prompt quality alone."
 
 ---
 
-# 7. Final Statement
+# 12. Final Statement
+
+The long-term lesson is simple: AI changes the speed of software production, but it does not remove the need for process. In fact, the faster the generator becomes, the more important the control system becomes.
 
 > This is not prompt engineering.
 
@@ -448,5 +738,35 @@ You should be able to explain your process like this:
 ```text
 Collect → Decide → Spec → QA → Ground → Phase → QA → Implement → QA → Update → Repeat
 ```
+
+---
+
+# Bibliography / Source Notes
+
+The following research sources inform this workflow. Each contributes specific findings that motivate specific controls inside the loop.
+
+---
+
+**Mehtiyev & Assunção — *Behavioral Drivers of Coding Agent Success and Failure***
+
+Contributes: context gathering, delayed editing, validation effort, architectural reasoning, and model/framework comparisons. Primary support for the "No edit before diagnosis" principle and the grounding step.
+
+---
+
+**Majgaonkar et al. — *Understanding Code Agent Behaviour***
+
+Contributes: trajectory analysis, diagnosis/reproduction/verification phases, and studying success/failure beyond simple pass rates. Primary support for the structural ordering of the workflow (context before action, validation before completion).
+
+---
+
+**Ehsani et al. — *Where Do AI Coding Agents Fail?***
+
+Contributes: small phases, CI validation, reviewability, and the risk of large or misaligned agent-authored PRs. Primary support for the "Small Phases Win" principle and the phase-bounded QA gates.
+
+---
+
+**Zhang, Zhang & Tan — *Dissecting Bug Triggers and Failure Modes in Modern Agentic Frameworks***
+
+Contributes: specialized validation for orchestration, context management, model compatibility, trace integrity, and execution-sequence failures. Primary support for extending validation beyond unit tests to include agentic-specific failure categories (configuration tests, trace validation, functional review).
 
 ---
