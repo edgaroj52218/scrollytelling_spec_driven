@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function Home() {
   return (
     <main
@@ -17,16 +19,12 @@ export default function Home() {
           justifyContent: "center",
         }}
       >
-        <img
+        <Image
           src="./images/steven.jpg"
           alt="A photo of me"
-          style={{
-            width: "200px",
-            height: "200px",
-            objectFit: "cover",
-            borderRadius: "50%",
-            marginBottom: "2rem",
-          }}
+          width={200}
+          height={200}
+          style={{ objectFit: 'cover', borderRadius: '50%', marginBottom: '2rem' }}
         />
         <h1 style={{ fontSize: "3rem", marginBottom: "1rem" }}>
           Three things I learned my first semester
