@@ -27,7 +27,7 @@ I did not define exit checks up front. That is itself a failure of the process m
 - README has submission block with live URL and my name: PASS
 - Original content visible on the homepage: FAIL — I ran out of time to figure out where the template stores content.
 - At least one scroll-linked effect added by me: FAIL
-- At least one image I added: FAIL
+- At least one image I added: PASS
 - PROCESS.md submitted and honest: PASS (this file)
 
 ## 3. Failure-mode reflection
