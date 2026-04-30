@@ -9,7 +9,7 @@ A statically-exported Next.js site that teaches **how to direct an AI pair on a 
 
 
 ## Student Submission
-- **Live site:** 
+- **Live site:** https://edgaroj52218.github.io/scrollytelling_spec_driven/
 - **Author:** Edgar Ojeda
 - **Topic:** 
 ## The brief (and the real lesson)
