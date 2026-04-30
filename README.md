@@ -7,6 +7,11 @@ A statically-exported Next.js site that teaches **how to direct an AI pair on a 
 - **Repo:** https://github.com/kaw393939/scrollytelling_spec_driven
 - **Stack:** Next.js 16 App Router (static export) · React 19 · TypeScript · framer-motion · Markdown + Zod · CSS Modules
 
+
+## Student Submission
+- **Live site:** 
+- **Author:** Edgar Ojeda
+- **Topic:** 
 ## The brief (and the real lesson)
 
 > **Vehicle:** a scrollytelling personal web page, deployed to GitHub Pages.
